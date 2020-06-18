@@ -19,6 +19,22 @@ mongoose
   .then(() => console.log("MongoDB successfully connected"))
   .catch((err) => console.log(err));
 
+app.use((req, res, next) => {
+  console.log("req.method", req.method);
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  // res.header("Access-Control-Allow-Methods", "GET,PUT, POST,DELETE");
+  next();
+  // if ("OPTIONS" == req.method) {
+  //   res.send(200);
+  // } else {
+  //   next();
+  // }
+});
+
 // Passport middleware
 app.use(passport.initialize());
 // Passport config
