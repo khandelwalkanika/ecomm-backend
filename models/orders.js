@@ -21,11 +21,11 @@ const OrderSchema = new Schema({
   },
   state: {
     type: String,
-    required: true,
+    required: false,
   },
   zip: {
     type: String,
-    required: true,
+    required: false,
   },
   date: {
     type: Date,

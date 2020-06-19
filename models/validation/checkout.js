@@ -28,12 +28,12 @@ module.exports = function validateCheckoutInput(data) {
   if (Validator.isEmpty(data.city)) {
     errors.city = "city field is required";
   }
-  if (Validator.isEmpty(data.state)) {
-    errors.state = "state field is required";
-  }
-  if (Validator.isEmpty(data.zip)) {
-    errors.zip = "zip field is required";
-  }
+  //   if (Validator.isEmpty(data.state)) {
+  //     errors.state = "state field is required";
+  //   }
+  //   if (Validator.isEmpty(data.zip)) {
+  //     errors.zip = "zip field is required";
+  //   }
 
   return {
     errors,
