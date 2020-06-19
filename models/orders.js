@@ -13,7 +13,7 @@ const OrderSchema = new Schema({
   },
   address2: {
     type: String,
-    required: true,
+    required: false,
   },
   city: {
     type: String,
