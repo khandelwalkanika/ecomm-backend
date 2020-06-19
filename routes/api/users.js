@@ -7,9 +7,10 @@ const keys = require("../../config/keys");
 // Load input validation
 const validateRegisterInput = require("../../models/validation/register");
 const validateLoginInput = require("../../models/validation/login");
+const validateCheckoutInput = require("../../models/validation/checkout");
 // Load User model
 const User = require("../../models/user");
-
+const Orders = require("../../models/orders");
 // @route POST api/users/register
 // @desc Register user
 // @access Public
@@ -41,6 +42,30 @@ router.post("/register", (req, res) => {
         });
       });
     }
+  });
+});
+
+// @route POST api/users/checkout
+router.post("/checkout", (req, res) => {
+  // Form validation
+  const { errors, isValid } = validateCheckoutInput(req.body);
+  // Check validation
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+  User.findOne({ email: req.body.email }).then((user) => {
+    const newOrder = new Orders({
+      email: req.body.email,
+      address: req.body.address,
+      address2: req.body.address2,
+      city: req.body.city,
+      state: req.body.state,
+      zip: req.body.zip,
+    });
+    newOrder
+      .save()
+      .then((order) => res.json(order))
+      .catch((err) => console.log(err));
   });
 });
 
