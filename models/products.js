@@ -1,37 +1,29 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 // Create Schema
-const OrderSchema = new Schema({
-  email: {
-    type: String,
-    required: true,
-  },
-  orderNumber: {
-    type: String,
-    required: true,
-  },
-  totalPrice: {
+const ProductSchema = new Schema({
+  id: {
     type: String,
     required: true,
   },
 
-  address: {
+  productType: {
     type: String,
     required: true,
   },
-  address2: {
+  productName: {
     type: String,
     required: false,
   },
-  city: {
+  price: {
     type: String,
     required: true,
   },
-  state: {
+  imagePath: {
     type: String,
-    required: false,
+    required: true,
   },
-  zip: {
+  numOfItems: {
     type: String,
     required: false,
   },
@@ -40,4 +32,4 @@ const OrderSchema = new Schema({
     default: Date.now,
   },
 });
-module.exports = Order = mongoose.model("orders", OrderSchema);
+module.exports = Products = mongoose.model("Products", ProductSchema);
