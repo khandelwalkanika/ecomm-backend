@@ -30,6 +30,7 @@ router.post("/register", (req, res) => {
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
+        userRole: req.body.userRole,
       });
       // Hash password before saving in database
       bcrypt.genSalt(10, (err, salt) => {
@@ -98,6 +99,7 @@ router.post("/login", (req, res) => {
         const payload = {
           id: user.id,
           name: user.name,
+          role: user.userRole,
         };
         // Sign token
         jwt.sign(
@@ -124,19 +126,22 @@ router.post("/login", (req, res) => {
 
 //product listings API
 router.post("/uploadProducts", (req, res) => {
-  const newProduct = new Products({
-    id: req.body.id,
-    productType: req.body.ProductType,
-    productName: req.body.ProductName,
-    price: req.body.price,
-    imagePath: req.body.imagePath,
-    numOfItems: req.body.numOfItems,
-  });
+  try {
+    const newProduct = new Products({
+      productType: req.body.productType,
+      productName: req.body.productName,
+      price: req.body.price,
+      imagePath: req.body.imagePath,
+      numOfItems: 0,
+    });
 
-  newProduct
-    .save()
-    .then((products) => res.json(products))
-    .catch((err) => console.log(err));
+    newProduct
+      .save()
+      .then((products) => res.json(products))
+      .catch((err) => console.log(err));
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 //get products from the DB
@@ -145,7 +150,45 @@ router.get("/getProducts", (req, res) => {
   Products.find({}).then(function (products) {
     res.send({ products });
   });
-  //fetch('/users').then(res => res.json())
+});
+
+//get product by :id from db
+router.route("/getProducts/:id").get(function (req, res) {
+  let id = req.params.id;
+  Products.findById(id, function (err, product) {
+    res.json(product);
+  });
+});
+
+//update a product
+router.route("/updateProduct/:id").post(function (req, res) {
+  try {
+    Products.findById(req.params.id, function (err, product) {
+      if (!product) res.status(404).send("data is not found");
+      else product.productName = req.body.productName;
+      product.productType = req.body.productType;
+      product.price = req.body.price;
+      product.imagePath = req.body.imagePath;
+      product
+        .save()
+        .then((product) => {
+          res.json("Product Updated!");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+//delete a product
+router.delete("/deleteProduct/:id", function (req, res, next) {
+  Products.findByIdAndRemove(req.params.id, req.body, function (err, post) {
+    if (err) return next(err);
+    res.json(post);
+  });
 });
 
 module.exports = router;

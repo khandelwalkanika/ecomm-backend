@@ -2,29 +2,24 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 // Create Schema
 const ProductSchema = new Schema({
-  id: {
-    type: String,
-    required: true,
-  },
-
   productType: {
     type: String,
     required: true,
   },
   productName: {
     type: String,
-    required: false,
+    required: true,
   },
   price: {
-    type: String,
+    type: Number,
     required: true,
   },
   imagePath: {
     type: String,
-    required: true,
+    required: false,
   },
   numOfItems: {
-    type: String,
+    type: Number,
     required: false,
   },
   date: {
