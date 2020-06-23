@@ -111,6 +111,7 @@ router.post("/login", (req, res) => {
           (err, token) => {
             res.json({
               success: true,
+              userRole: user.userRole,
               token: "Bearer " + token,
             });
           }
@@ -187,8 +188,12 @@ router.route("/updateProduct/:id").post(function (req, res) {
 router.delete("/deleteProduct/:id", function (req, res, next) {
   Products.findByIdAndRemove(req.params.id, req.body, function (err, post) {
     if (err) return next(err);
-    res.json(post);
+    // res.json(post);
+    Products.find({}).then(function (products) {
+      res.send({ products });
+    });
   });
+  // .find().pretty()
 });
 
 module.exports = router;
