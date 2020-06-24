@@ -173,7 +173,9 @@ router.route("/updateProduct/:id").post(function (req, res) {
       product
         .save()
         .then((product) => {
-          res.json("Product Updated!");
+          Products.find({}).then(function (products) {
+            res.send({ products });
+          });
         })
         .catch((err) => {
           console.log(err);
