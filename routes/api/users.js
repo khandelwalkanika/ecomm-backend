@@ -22,6 +22,7 @@ router.post("/register", (req, res) => {
   if (!isValid) {
     return res.status(400).json(errors);
   }
+
   User.findOne({ email: req.body.email }).then((user) => {
     if (user) {
       return res.status(400).json({ email: "Email already exists" });
@@ -147,8 +148,8 @@ router.post("/uploadProducts", (req, res) => {
 
 //get products from the DB
 router.get("/getProducts", (req, res) => {
-  console.log(res);
   Products.find({}).then(function (products) {
+    console.log(res);
     res.send({ products });
   });
 });

@@ -17,7 +17,16 @@ app.use(bodyParser.json());
 app.use(cors()); // always before router...
 // DB Config
 const db = require("./config/keys").mongoURI;
-// Connect to MongoDB
+
+//var url = "mongodb://localhost:27017/ecomm-local";
+// MongoClient.connect(url, function (err, db) {
+//   assert.equal(null, err);
+//   // db.db("ecomm-local")
+//   //   .collections()
+//   //   .then((res) => res.forEach((r) => console.log(r.collectionName)));
+//   // db.connect();
+// });
+
 mongoose
   .connect(db, { useNewUrlParser: true })
   .then(() => console.log("MongoDB successfully connected"))
