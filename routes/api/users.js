@@ -164,7 +164,8 @@ router.get("/getProducts", (req, res) => {
     let folders = fs.readdirSync("public/images/uploads");
     console.log(folders, "<-----");
     products.forEach(function (eachItem) {
-      eachItem.imagePath = folders;
+      eachItem.imagePath = `http://localhost:5000/${eachItem.imagePath}`;
+      console.log("EACH ITEM:", eachItem);
     });
 
     res.send({ products });
