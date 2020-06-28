@@ -5,16 +5,25 @@ const app = express();
 const passport = require("passport");
 const users = require("./routes/api/users");
 const cors = require("cors");
-
+const multer = require("multer");
 // Bodyparser middleware
+app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
-    extended: false,
+    extended: true,
   })
 );
 
-app.use(bodyParser.json());
 app.use(cors()); // always before router...
+
+//used when image was uploaded
+var publicDir = require("path").join(__dirname, "/public/images/uploads");
+app.use(express.static(publicDir));
+
+// app.use(express.static("public/images/uploads"));
+// app.use(express.static("files"));
+// app.use("/static", express.static(path.join(__dirname, "public")));
+// app.use("/static", express.static("public/images/uploads"));
 // DB Config
 const db = require("./config/keys").mongoURI;
 
@@ -33,7 +42,7 @@ mongoose
   .catch((err) => console.log(err));
 
 app.use((req, res, next) => {
-  console.log("req.method", req.method);
+  // console.log("req.method", req.method);
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",

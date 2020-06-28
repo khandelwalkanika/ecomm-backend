@@ -3,8 +3,9 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const keys = require("../../config/keys");
+const fs = require("fs");
 // Loading input validation
-
+const multer = require("multer"); // for uploading , it sets the destination folder
 const validateRegisterInput = require("../../models/validation/register");
 const validateLoginInput = require("../../models/validation/login");
 const validateCheckoutInput = require("../../models/validation/checkout");
@@ -12,6 +13,15 @@ const validateCheckoutInput = require("../../models/validation/checkout");
 const User = require("../../models/user");
 const Orders = require("../../models/orders");
 const Products = require("../../models/products");
+
+let storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "public/images/uploads");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
 // @route POST api/users/register
 // @desc Register user
 // @access Public
@@ -127,16 +137,17 @@ router.post("/login", (req, res) => {
 });
 
 //product listings API
-router.post("/uploadProducts", (req, res) => {
+// multer({ storage: storage }).single("imagePath")
+let upload = multer({ storage: storage });
+router.post("/uploadProducts", upload.single("imagePath"), (req, res) => {
   try {
     const newProduct = new Products({
       productType: req.body.productType,
       productName: req.body.productName,
       price: req.body.price,
-      imagePath: req.body.imagePath,
+      imagePath: req.file ? req.file.filename : null,
       numOfItems: 0,
     });
-
     newProduct
       .save()
       .then((products) => res.json(products))
@@ -149,7 +160,13 @@ router.post("/uploadProducts", (req, res) => {
 //get products from the DB
 router.get("/getProducts", (req, res) => {
   Products.find({}).then(function (products) {
-    console.log(res);
+    // let y = products;
+    let folders = fs.readdirSync("public/images/uploads");
+    console.log(folders, "<-----");
+    products.forEach(function (eachItem) {
+      eachItem.imagePath = folders;
+    });
+
     res.send({ products });
   });
 });
@@ -158,29 +175,35 @@ router.get("/getProducts", (req, res) => {
 router.route("/getProducts/:id").get(function (req, res) {
   let id = req.params.id;
   Products.findById(id, function (err, product) {
+    // product.forEach(function (eachItem) {
+    // product.iPath = `public/images/uploads/${product.imagePath}`;
+    // });
     res.json(product);
   });
 });
 
 //update a product
-router.route("/updateProduct/:id").post(function (req, res) {
+router.post("/updateProduct/:id", upload.single("imagePath"), function (
+  req,
+  res
+) {
   try {
     Products.findById(req.params.id, function (err, product) {
       if (!product) res.status(404).send("data is not found");
       else product.productName = req.body.productName;
       product.productType = req.body.productType;
       product.price = req.body.price;
-      product.imagePath = req.body.imagePath;
-      product
-        .save()
-        .then((product) => {
-          Products.find({}).then(function (products) {
-            res.send({ products });
+      (product.imagePath = req.file ? req.file.filename : null),
+        product
+          .save()
+          .then((product) => {
+            Products.find({}).then(function (products) {
+              res.send({ products });
+            });
+          })
+          .catch((err) => {
+            console.log(err);
           });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
     });
   } catch (err) {
     console.log(err);
